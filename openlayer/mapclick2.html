@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>OpenLayers Click Handler Example</title>
+        
+         <style type="text/css">
+            #map {
+                width: 340px;
+                height: 340px;
+                border: 1px solid gray;
+                visibility: visible;
+            }
+        </style>
+        <script src="OpenLayers-2.13.1/OpenLayers.js"></script>
+        <script type="text/javascript">
+            OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
+                defaultHandlerOptions: {
+                    'single': true,
+                    'double': false,
+                    'pixelTolerance': 0,
+                    'stopSingle': false,
+                    'stopDouble': false
+                },
+
+                initialize: function(options) {
+                    this.handlerOptions = OpenLayers.Util.extend(
+                        {}, this.defaultHandlerOptions
+                    );
+                    OpenLayers.Control.prototype.initialize.apply(
+                        this, arguments
+                    ); 
+                    this.handler = new OpenLayers.Handler.Click(
+                        this, {
+                            'click': this.onMapClick
+                        }, this.handlerOptions
+                    );
+                }, 
+
+                onMapClick: function(evt) {
+                    var output = document.getElementById(this.key + "Output");
+                    position = map.getLonLatFromPixel(evt.xy);        
+                    locationDiv.innerHTML = "Lat: " + Math.abs(position.lat) +
+                    ((position.lat > 0) ? " N" : " S") + "</br>" +
+                    "Lon: " + Math.abs(position.lon) +
+                    ((position.lon > 0) ? " W" : " E");
+                },
+            });
+
+            var map, controls; 
+
+            function init(){
+         var layerExtent = new OpenLayers.Bounds( -13758743.4295939,  5591455.28887228, -13531302.3472101 , 5757360.4178881);
+         
+         
+              map = new OpenLayers.Map({
+				    div: "map",
+				    layers: [new OpenLayers.Layer.Vector("KML", {
+				            strategies: [new OpenLayers.Strategy.Fixed()],
+				            protocol: new OpenLayers.Protocol.HTTP({
+				                url: "tiputini_trails.kml",				                
+				                format: new OpenLayers.Format.KML({
+				                    extractStyles: true, 
+				                    extractAttributes: true,
+				                    maxDepth: 2
+				                })
+				            })
+				        }),
+           		new OpenLayers.Layer.XYZ( "ESRI",
+                    "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}",
+                     { sphericalMercator: true} )
+                   
+               
+				        
+				    ],
+				    center: new OpenLayers.LonLat(-76.15292,-0.63204),
+				    zoom: 13
+				});
+
+               controls = {
+                    "single": new OpenLayers.Control.Click({
+                        handlerOptions: {
+                            "single": true
+                        }
+                    })
+                };
+
+                var props = document.getElementById("props");
+                var control;
+                for(var key in controls) {
+                    control = controls[key];
+                    // only to route output here
+                    control.key = key;
+                    map.addControl(control);
+                };
+                
+                // zoom in on the extent:
+                 map.zoomToExtent(layerExtent);
+                 
+                controls['single'].activate();
+            }
+            
+            function toggle(key) {
+                var control = controls[key];
+                if(control.active) {
+                    control.deactivate();
+                } else {
+                    control.activate();
+                }
+                var status = document.getElementById(key + "Status");
+                status.innerHTML = control.active ? "on" : "off";
+                var output = document.getElementById(key + "Output");
+                output.value = "";
+            }
+          
+				function zoom() {
+					map.zoom = zoom.value;
+				}
+        </script>
+    </head>
+    <body onload="init()">          
+            <div id="map" class="smallmap"></div>
+            	<input type="range" id="zoom" min="1" max="13" onChange="zoom();">
+
+            <div id="locationDiv" ></div>
+    </body>
+</html>

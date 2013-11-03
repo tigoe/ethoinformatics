@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>OpenLayers Click Handler Example</title>
+        <link rel="stylesheet" type="text/css" href="demo-style.css">
+        <script type="text/javascript" src="OpenLayers-2.13.1/OpenLayers.js"></script>
+        <script type="text/javascript" src="map-clicker.js"></script>
+    </head>
+    
+    <body onload="init()">          
+            <div id="map" class="smallmap"></div>
+            <div id="locationDiv"></div>
+				<p>
+	         How confident are you about this position?<br>
+	         <input type="range" id="quality" min="1" max="5" onChange="update();">
+				<div id="label"></div>
+
+    </body>
+</html>
