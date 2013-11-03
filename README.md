@@ -1,0 +1,1 @@
+This is a repository for code examples for the ethoinformatics project at ethoinformatics.org. At the moment, it's a collection of messy examples, meant for internal use only.
